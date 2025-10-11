@@ -85,7 +85,7 @@ in
     meta = {
       description = "Eucalyptus Drop is an enhanced fork of SDDM Sugar Candy by Marian Arlt.";
       homepage = "https://gitlab.com/Matt.Jolly/sddm-eucalyptus-drop";
-      platforms = lib.platforms.linux ++ lib.platforms.freebsd;
+      platforms = kdePackages.sddm.meta.platforms;
       license = lib.licenses.gpl3;
     };
   }

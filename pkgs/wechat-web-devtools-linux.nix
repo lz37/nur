@@ -34,6 +34,7 @@ in
       license = with lib.licenses; [
         mit
       ];
-      platforms = lib.filter (p: lib.strings.hasSuffix "linux" p) lib.platforms.x86_64;
+      platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
+      mainProgram = pname;
     };
   }

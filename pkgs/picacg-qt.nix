@@ -31,7 +31,8 @@ in
     meta = {
       description = "tonquer/picacg-qt: 哔咔漫画, PicACG comic PC client(Windows, Linux, MacOS)";
       homepage = "https://github.com/tonquer/picacg-qt";
-      platforms = lib.filter (p: lib.strings.hasSuffix "linux" p) lib.platforms.x86_64;
+      platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
       license = lib.licenses.lgpl3;
+      mainProgram = pname;
     };
   }

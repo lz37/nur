@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   stdenv,
   ...
@@ -26,6 +25,6 @@ in
     meta = {
       description = "A plugin for zsh-syntax-highlighting that turns URLs green if they respond with a \" good \"** status, and red otherwise. Useful for checking URL typos.";
       homepage = "https://github.com/ascii-soup/zsh-url-highlighter";
-      platforms = lib.platforms.unix;
+      platforms = pkgs.zsh.meta.platforms;
     };
   }

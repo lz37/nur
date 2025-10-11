@@ -19,5 +19,6 @@ rustPlatform.buildRustPackage (finalAttrs: rec {
     homepage = "https://github.com/xxanqw/mikusays";
     platforms = lib.platforms.windows ++ lib.platforms.linux ++ lib.platforms.darwin;
     license = lib.licenses.mit;
+    mainProgram = pname;
   };
 })

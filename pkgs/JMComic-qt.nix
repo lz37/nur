@@ -31,7 +31,8 @@ in
     meta = {
       description = "tonquer/JMComic-qt: 禁漫天堂，18comic，使用qt实现的PC客户端，支持Windows，Linux，MacOS";
       homepage = "https://github.com/tonquer/JMComic-qt";
-      platforms = lib.filter (p: lib.strings.hasSuffix "linux" p) lib.platforms.x86_64;
+      platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
       license = lib.licenses.lgpl3;
+      mainProgram = pname;
     };
   }
