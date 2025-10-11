@@ -49,7 +49,7 @@ in
     meta = {
       description = "Chinese ancient poetry fortune.";
       homepage = "https://github.com/shenyunhang/fortune-zh";
-      platforms = lib.platforms.unix;
+      platforms = pkgs.fortune.meta.platforms;
       license = lib.licenses.lgpl3;
     };
   }
