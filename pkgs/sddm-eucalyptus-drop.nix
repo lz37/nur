@@ -54,13 +54,10 @@
   theme-conf = ''
     [General]
     ${
-      (default-theme // overrideTheme)
-      |> lib.attrsToList
-      |> builtins.map ({
+      (builtins.concatStringsSep "\n" (builtins.map ({
         name,
         value,
-      }: "${name}=${value}")
-      |> builtins.concatStringsSep "\n"
+      }: "${name}=${value}") (lib.attrsToList (default-theme // overrideTheme))))
     }
   '';
   pname = "sddm-eucalyptus-drop";
