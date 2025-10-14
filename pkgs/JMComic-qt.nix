@@ -5,7 +5,6 @@
   pkgs,
   fetchPypi,
   python3,
-  fetchurl,
   ...
 }: let
   python =
@@ -58,15 +57,8 @@
           dontCheckRuntimeDeps = true;
           pythonImportsCheck = ["jmcomic"];
         })
-        (buildPythonPackage rec {
-          pname = "waifu2x-vulkan";
-          version = "1.1.6";
-          format = "wheel";
-          src = fetchurl {
-            url = "https://github.com/tonquer/${pname}/releases/download/v${version}/sr_ncnn_vulkan-1.2.0-cp37-abi3-linux_x86_64.whl";
-            hash = "sha256-Sl4sHDA7CcgmYaKn5OMbDZg/vZKlFi0ByxQdXwxLxEQ=";
-          };
-        })
+        ((import ./python3 {inherit pkgs;}).python3-waifu2x-vulkan.override
+          {inherit buildPythonPackage;})
       ]);
 in
   stdenv.mkDerivation rec {
