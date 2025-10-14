@@ -19,12 +19,10 @@ stdenv.mkDerivation rec {
     cp -Rn $src $out/lib/libwaybar_vd.so
   '';
 
-  meta = {
+  meta = with lib; {
     description = "A high-performance CFFI module for Waybar that displays Hyprland virtual desktops with real-time updates and click handling.";
     homepage = "https://github.com/givani30/waybar-vd";
-    license = with lib.licenses; [
-      mit
-    ];
-    platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
+    license = with licenses; [mit];
+    platforms = with platforms; (intersectLists x86_64 linux);
   };
 }

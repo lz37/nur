@@ -46,10 +46,11 @@ in
       runHook postInstall
     '';
 
-    meta = {
+    meta = with lib; {
       description = "Chinese ancient poetry fortune.";
       homepage = "https://github.com/shenyunhang/fortune-zh";
       platforms = pkgs.fortune.meta.platforms;
-      license = lib.licenses.lgpl3;
+      license = with licenses; [lgpl3];
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }

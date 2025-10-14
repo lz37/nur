@@ -1,6 +1,7 @@
 {
   pkgs,
   stdenv,
+  lib,
   ...
 }: let
   version = "1.0.0";
@@ -22,9 +23,10 @@ in
       cp -r url $out/share/zsh-syntax-highlighting/highlighters/
     '';
 
-    meta = {
+    meta = with lib; {
       description = "A plugin for zsh-syntax-highlighting that turns URLs green if they respond with a \" good \"** status, and red otherwise. Useful for checking URL typos.";
       homepage = "https://github.com/ascii-soup/zsh-url-highlighter";
       platforms = pkgs.zsh.meta.platforms;
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }

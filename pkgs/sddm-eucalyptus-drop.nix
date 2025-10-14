@@ -82,10 +82,11 @@ in
       echo '${theme-conf}' > $out/share/sddm/themes/${pname}/theme.conf
       cp -Rn $src/* $out/share/sddm/themes/${pname}/
     '';
-    meta = {
+    meta = with lib; {
       description = "Eucalyptus Drop is an enhanced fork of SDDM Sugar Candy by Marian Arlt.";
       homepage = "https://gitlab.com/Matt.Jolly/sddm-eucalyptus-drop";
       platforms = kdePackages.sddm.meta.platforms;
-      license = lib.licenses.gpl3;
+      license = with licenses; [gpl3];
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }

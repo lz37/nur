@@ -28,13 +28,11 @@ in
       cp ${appimageContents}/wechat-devtools.png $out/share/pixmaps/
       substituteInPlace $out/share/applications/io.github.msojocs.wechat_devtools.desktop --replace-fail 'Exec=bin/wechat-devtools' 'Exec=${pname}'
     '';
-    meta = {
+    meta = with lib; {
       description = "msojocs/wechat-web-devtools-linux: 适用于微信小程序的微信开发者工具 Linux移植版";
       homepage = "https://github.com/msojocs/wechat-web-devtools-linux";
-      license = with lib.licenses; [
-        mit
-      ];
-      platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
+      license = with licenses; [mit];
+      platforms = with platforms; (intersectLists x86_64 linux);
       mainProgram = pname;
     };
   }

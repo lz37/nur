@@ -28,11 +28,11 @@ in
       cp ${appimageContents}/PicACG.png $out/share/pixmaps/
       substituteInPlace $out/share/applications/PicACG.desktop --replace-fail 'Exec=PicACG' 'Exec=${pname}'
     '';
-    meta = {
+    meta = with lib; {
       description = "tonquer/picacg-qt: 哔咔漫画, PicACG comic PC client(Windows, Linux, MacOS)";
       homepage = "https://github.com/tonquer/picacg-qt";
-      platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
-      license = lib.licenses.lgpl3;
+      platforms = with platforms; (intersectLists x86_64 linux);
+      license = with licenses; [lgpl3];
       mainProgram = pname;
     };
   }
