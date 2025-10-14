@@ -18,6 +18,6 @@
   sddm-eucalyptus-drop = pkgs.callPackage ./pkgs/sddm-eucalyptus-drop.nix {};
   wechat-web-devtools-linux = pkgs.callPackage ./pkgs/wechat-web-devtools-linux.nix {};
   zsh-url-highlighter = pkgs.callPackage ./pkgs/zsh-url-highlighter.nix {};
-  waybar-vd = pkgs.callPackage ./pkgs/waybar-vd.nix {};
+  waybar-vd = pkgs.callPackage ./pkgs/waybar-vd {};
 }
 // (import ./pkgs/python3 {inherit pkgs;})
