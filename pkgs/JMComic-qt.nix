@@ -83,10 +83,14 @@ in
       makeWrapper
       python
     ];
-    buildInputs = with pkgs; [
-      libxcb-util
-      vulkan-loader
-    ];
+    buildInputs = with pkgs; ([
+        vulkan-loader
+      ]
+      ++ (
+        if (lib.versionAtLeast lib.version "25.11")
+        then [libxcb-util libxcb]
+        else [xorg.libxcb]
+      ));
     buildPhase = ''
       runHook preBuild
       pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "./lib/linux/*:."  -w src/start.py
