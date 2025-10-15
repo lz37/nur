@@ -2,7 +2,12 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  pkgs,
+  fuse,
+  xorg,
+  libxcb-util ? null,
+  libxcb ? xorg.libxcb,
+  makeWrapper,
+  vulkan-loader,
   python3,
   python3-waifu2x-vulkan,
   python3-jmcomic,
@@ -42,19 +47,19 @@ in
       rev = "v${version}";
       hash = "sha256-cvDdA5xewawO7ccs3Zv1xfTW9zHImnu+xLUKvq3Fpns=";
     };
-    nativeBuildInputs = with pkgs; [
+    nativeBuildInputs = [
       fuse
       makeWrapper
       python
     ];
-    buildInputs = with pkgs; ([
+    buildInputs =
+      [
         vulkan-loader
+        libxcb
       ]
       ++ (
-        if (pkgs ? libxcb-util)
-        then [libxcb-util libxcb]
-        else [xorg.libxcb]
-      ));
+        lib.optional (libxcb-util != null) libxcb-util
+      );
     buildPhase = ''
       runHook preBuild
       pyinstaller --hidden-import=_cffi_backend --collect-data curl_cffi --add-data "./lib/linux/*:."  -w src/start.py

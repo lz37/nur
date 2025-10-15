@@ -14,8 +14,10 @@ stdenv.mkDerivation rec {
   dontBuild = true;
   dontUnpack = true;
   installPhase = ''
+    runHook preInstall
     mkdir -p $out/share/${pname}
     cp -r $src $out/share/${pname}/book.db
+    runHook postInstall
   '';
   meta = with lib; {
     description = "database of picacg - 使用百度翻译Api";

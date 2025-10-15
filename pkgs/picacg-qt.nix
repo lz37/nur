@@ -2,10 +2,15 @@
   stdenv,
   lib,
   fetchFromGitHub,
-  pkgs,
   python3,
   python3-waifu2x-vulkan,
   picacg-database,
+  fuse,
+  makeWrapper,
+  xorg,
+  libxcb-util ? null,
+  libxcb ? xorg.libxcb,
+  vulkan-loader,
   ...
 }: let
   pname = "picacg-qt";
@@ -31,14 +36,14 @@
         (python3-waifu2x-vulkan.override
           {inherit python3;})
       ]);
-  runtimeDep = with pkgs; ([
+  runtimeDep =
+    [
       vulkan-loader
+      libxcb
     ]
     ++ (
-      if (pkgs ? libxcb-util)
-      then [libxcb-util libxcb]
-      else [xorg.libxcb]
-    ));
+      lib.optional (libxcb-util != null) libxcb-util
+    );
 in
   stdenv.mkDerivation rec {
     inherit pname version;
@@ -48,7 +53,7 @@ in
       rev = "v${version}";
       hash = "sha256-tsIEfcUsI3RFSmFf2uXgQpbjHOIOqhupgZmRQdtoDoU=";
     };
-    nativeBuildInputs = with pkgs; [
+    nativeBuildInputs = [
       fuse
       makeWrapper
       python

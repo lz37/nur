@@ -2,7 +2,12 @@
   fetchFromGitHub,
   lib,
   rustPlatform,
-  pkgs,
+  glib,
+  pango,
+  cairo,
+  gdk-pixbuf,
+  gtk3,
+  pkg-config,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "waybar-vd";
@@ -19,11 +24,11 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-G1zIBh0djVcHnXIGDlyVP6DjYMtXOnj2Xiyu6kyo0G8=";
   };
 
-  nativeBuildInputs = with pkgs; [
+  nativeBuildInputs = [
     pkg-config
   ];
 
-  buildInputs = with pkgs; [
+  buildInputs = [
     glib
     pango
     cairo

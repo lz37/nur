@@ -1,5 +1,7 @@
 {
-  pkgs,
+  coreutils,
+  python3,
+  fortune,
   stdenv,
   fetchFromGitLab,
   lib,
@@ -18,8 +20,8 @@ in
       hash = "sha256-+i0Leyna+F/9vpPNSlVnShug2wLDPi8OpYSwkhW6z14=";
     };
 
-    buildInputs = [pkgs.fortune];
-    nativeBuildInputs = with pkgs; [
+    buildInputs = [fortune];
+    nativeBuildInputs = [
       coreutils
       python3
       fortune
@@ -49,7 +51,7 @@ in
     meta = with lib; {
       description = "Chinese ancient poetry fortune.";
       homepage = "https://github.com/shenyunhang/fortune-zh";
-      platforms = pkgs.fortune.meta.platforms;
+      platforms = fortune.meta.platforms;
       license = with licenses; [lgpl3];
       sourceProvenance = with sourceTypes; [fromSource];
     };

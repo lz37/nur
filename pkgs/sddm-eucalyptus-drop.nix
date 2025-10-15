@@ -78,9 +78,11 @@ in
       kdePackages.qtbase
     ];
     installPhase = ''
+      runHook preInstall
       mkdir -p $out/share/sddm/themes/${pname}
       echo '${theme-conf}' > $out/share/sddm/themes/${pname}/theme.conf
       cp -Rn $src/* $out/share/sddm/themes/${pname}/
+      runHook postInstall
     '';
     meta = with lib; {
       description = "Eucalyptus Drop is an enhanced fork of SDDM Sugar Candy by Marian Arlt.";
