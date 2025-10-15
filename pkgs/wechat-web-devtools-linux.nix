@@ -113,7 +113,7 @@ in
         ln -s $out/opt/${pname}/bin/wechat-devtools $out/bin/wechat-devtools
         ln -s $out/opt/${pname}/bin/wechat-devtools-cli $out/bin/wechat-devtools-cli
       ''
-      + (lib.join "\n" (lib.map (x: ''
+      + (lib.concatStringsSep "\n" (lib.map (x: ''
         wrapProgram ${x} \
           --prefix LD_LIBRARY_PATH : "$out/opt/${pname}/nwjs/lib" \
           --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs} \
