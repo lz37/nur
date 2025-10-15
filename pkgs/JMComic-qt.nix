@@ -3,8 +3,9 @@
   stdenv,
   fetchFromGitHub,
   pkgs,
-  fetchPypi,
   python3,
+  python3-waifu2x-vulkan,
+  python3-jmcomic,
   ...
 }: let
   python =
@@ -27,38 +28,9 @@
           with finalAttrs; {
             dependencies = dependencies ++ (with optional-dependencies; http2 ++ socks);
           }))
-        (buildPythonPackage rec {
-          pname = "jmcomic";
-          version = "2.6.9";
-          pyproject = true;
-          build-system = [setuptools];
-          src = fetchPypi {
-            inherit pname version;
-            hash = "sha256-Pfrtc6IQ3Ha7jZ1edwHgeTblEgBiSRrSeqShqskPcNc=";
-          };
-          propagatedBuildInputs = [
-            curl-cffi
-            pillow
-            pycryptodome
-            pyyaml
-            (buildPythonPackage rec {
-              pname = "commonx";
-              version = "0.6.39";
-              format = "setuptools";
-              src = fetchPypi {
-                inherit pname version;
-                hash = "sha256-Lo/kHgeMkhUvlZO1qOeUoLdINU4rhz7mFjAGnXRad9U=";
-              };
-              # Package name is commonx but import name is common
-              doCheck = false;
-            })
-          ];
-          # Skip runtime deps check because commonx package name != import name (common)
-          dontCheckRuntimeDeps = true;
-          pythonImportsCheck = ["jmcomic"];
-        })
-        ((import ./python3 {inherit pkgs;}).python3-waifu2x-vulkan.override
-          {inherit buildPythonPackage;})
+        python3-jmcomic
+        (python3-waifu2x-vulkan.override
+          {inherit python3;})
       ]);
 in
   stdenv.mkDerivation rec {
@@ -79,7 +51,7 @@ in
         vulkan-loader
       ]
       ++ (
-        if (lib.versionAtLeast lib.version "25.11")
+        if (pkgs ? libxcb-util)
         then [libxcb-util libxcb]
         else [xorg.libxcb]
       ));

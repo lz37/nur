@@ -4,7 +4,8 @@
   fetchFromGitHub,
   pkgs,
   python3,
-  fetchurl,
+  python3-waifu2x-vulkan,
+  picacg-database,
   ...
 }: let
   pname = "picacg-qt";
@@ -27,28 +28,14 @@
           with finalAttrs; {
             dependencies = dependencies ++ (with optional-dependencies; http2 ++ socks);
           }))
-        ((import ./python3 {inherit pkgs;}).python3-waifu2x-vulkan.override
-          {inherit buildPythonPackage;})
+        (python3-waifu2x-vulkan.override
+          {inherit python3;})
       ]);
-  picacgDatabase = stdenv.mkDerivation rec {
-    pname = "picacg-database";
-    version = "1.5.3";
-    src = fetchurl {
-      url = "https://github.com/bika-robot/${pname}/releases/download/v${version}/book.db";
-      hash = "sha256-Qt/8D8ahKvYCC8+G+89yZCFTe99w/Oc+ZekX968e3oo=";
-    };
-    dontBuild = true;
-    dontUnpack = true;
-    installPhase = ''
-      mkdir -p $out/share/${pname}
-      cp -r $src $out/share/${pname}/book.db
-    '';
-  };
   runtimeDep = with pkgs; ([
       vulkan-loader
     ]
     ++ (
-      if (lib.versionAtLeast lib.version "25.11")
+      if (pkgs ? libxcb-util)
       then [libxcb-util libxcb]
       else [xorg.libxcb]
     ));
@@ -66,7 +53,7 @@ in
       makeWrapper
       python
     ];
-    buildInputs = runtimeDep ++ [picacgDatabase];
+    buildInputs = runtimeDep ++ [picacg-database];
     buildPhase = ''
       runHook preBuild
       pyinstaller -w src/start.py
@@ -87,7 +74,7 @@ in
         --run 'if [ ! -d ~/.picacg/db ];then mkdir -p ~/.picacg/db; echo "mkdir db";fi' \
         --run 'if [ ! -d ~/.picacg/data ];then mkdir -p ~/.picacg/data; echo "mkdir data";fi' \
         --run 'if [ ! -f ~/.picacg/version ];then touch ~/.picacg/db/version; echo "mkdir version";fi' \
-        --run 'if [ ! -f ~/.picacg/db/book.db ] || [ "`cat ~/.picacg/db/version`" != "${picacgDatabase.version}" ] ; then cp -f ${picacgDatabase}/share/${picacgDatabase.pname}/book.db ~/.picacg/db/;echo "${picacgDatabase.version}" > ~/.picacg/db/version;echo "copy db";fi'
+        --run 'if [ ! -f ~/.picacg/db/book.db ] || [ "`cat ~/.picacg/db/version`" != "${picacg-database.version}" ] ; then cp -f ${picacg-database}/share/${picacg-database.pname}/book.db ~/.picacg/db/;echo "${picacg-database.version}" > ~/.picacg/db/version;echo "copy db";fi'
       runHook postInstall
     '';
     meta = with lib; {
