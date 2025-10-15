@@ -30,6 +30,6 @@ with python3.pkgs;
       homepage = "https://github.com/hect0x7/JMComic-Crawler-Python";
       platforms = with platforms; all;
       license = with licenses; [mit];
-      sourceProvenance = with sourceTypes; [binaryBytecode];
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }

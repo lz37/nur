@@ -20,6 +20,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/hect0x7/common";
     platforms = with platforms; all;
     license = with licenses; [mit];
-    sourceProvenance = with sourceTypes; [binaryBytecode];
+    sourceProvenance = with sourceTypes; [fromSource];
   };
 }
