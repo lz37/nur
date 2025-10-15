@@ -80,6 +80,8 @@ in
         --run 'if [ ! -d ~/.picacg/data ];then mkdir -p ~/.picacg/data; echo "mkdir data";fi' \
         --run 'if [ ! -f ~/.picacg/version ];then touch ~/.picacg/db/version; echo "mkdir version";fi' \
         --run 'if [ ! -f ~/.picacg/db/book.db ] || [ "`cat ~/.picacg/db/version`" != "${picacg-database.version}" ] ; then cp -f ${picacg-database}/share/${picacg-database.pname}/book.db ~/.picacg/db/;echo "${picacg-database.version}" > ~/.picacg/db/version;echo "copy db";fi'
+      substituteInPlace $out/share/applications/${pname}.desktop \
+        --replace-fail PicACG ${pname}
       runHook postInstall
     '';
     meta = with lib; {

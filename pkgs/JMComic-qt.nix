@@ -77,6 +77,8 @@ in
       cp $src/res/icon/logo_round.png $out/share/pixmaps/${pname}.png
       wrapProgram $out/bin/${pname} \
         --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs}
+      substituteInPlace $out/share/applications/${pname}.desktop \
+        --replace-fail JMComic ${pname}
       runHook postInstall
     '';
     meta = with lib; {

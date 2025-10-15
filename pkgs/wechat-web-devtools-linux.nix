@@ -110,17 +110,18 @@ in
         cp -r ./* "$out/opt/${pname}"
         install -Dm644 "${aur}/wechat-devtools.desktop" "$out/share/applications/${pname}.desktop"
         install -Dm644 "${aur}/wechat-devtools.png" "$out/share/icons/${pname}.png"
-        ln -s $out/opt/${pname}/bin/wechat-devtools $out/bin/wechat-devtools
-        ln -s $out/opt/${pname}/bin/wechat-devtools-cli $out/bin/wechat-devtools-cli
+        ln -s $out/opt/${pname}/bin/wechat-devtools $out/bin/${pname}
+        ln -s $out/opt/${pname}/bin/wechat-devtools-cli $out/bin/${pname}-cli
+        substituteInPlace $out/share/applications/${pname}.desktop \
+          --replace-fail wechat-devtools ${pname}
       ''
       + (lib.concatStringsSep "\n" (lib.map (x: ''
         wrapProgram ${x} \
           --prefix LD_LIBRARY_PATH : "$out/opt/${pname}/nwjs/lib" \
           --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath buildInputs} \
           --set-default XDG_CONFIG_HOME "\$HOME/.config" \
-          --set LIBGL_DRIVERS_PATH "${mesa.drivers}/lib/dri" \
-          --prefix LD_LIBRARY_PATH : "${mesa.drivers}/lib"
-      '') ["$out/bin/wechat-devtools" "$out/bin/wechat-devtools-cli"]))
+          --set LIBGL_DRIVERS_PATH "${mesa}/lib/dri"
+      '') ["$out/bin/${pname}" "$out/bin/${pname}-cli"]))
       + "\nrunHook postInstall";
 
     meta = with lib; {
@@ -128,7 +129,7 @@ in
       homepage = "https://github.com/msojocs/wechat-web-devtools-linux";
       license = with licenses; [mit];
       platforms = with platforms; (intersectLists x86_64 linux);
-      mainProgram = "wechat-devtools";
+      mainProgram = pname;
       sourceProvenance = with sourceTypes; [binaryBytecode];
     };
   }
