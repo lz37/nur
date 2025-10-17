@@ -18,4 +18,5 @@
   wechat-web-devtools-linux = pkgs.callPackage ./pkgs/wechat-web-devtools-linux.nix {};
   zsh-url-highlighter = pkgs.callPackage ./pkgs/zsh-url-highlighter.nix {};
   waybar-vd = pkgs.callPackage ./pkgs/waybar-vd {};
+  mihomo-smart = pkgs.callPackage ./pkgs/mihomo-smart.nix {};
 }
