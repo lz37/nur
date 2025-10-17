@@ -41,7 +41,8 @@ in
       description = "A rule-based tunnel in Go with Smart Groups functionality (fork of mihomo)";
       homepage = "https://github.com/vernesong/mihomo";
       license = licenses.gpl3Only;
-      mainProgram = "mihomo-smart";
+      mainProgram = pname;
       platforms = platforms.all;
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }
