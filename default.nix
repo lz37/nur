@@ -5,9 +5,7 @@
 # Having pkgs default to <nixpkgs> is fine though, and it lets you use short
 # commands such as:
 #     nix-build -A mypackage
-{pkgs ? import <nixpkgs> {}}: let
-  placeholder = pkgs.emptyDirectory or (pkgs.runCommand "placeholder" {} "mkdir -p $out");
-in {
+{pkgs ? import <nixpkgs> {}}: {
   # The `lib`, `modules`, and `overlays` names are special
   lib = import ./lib {inherit pkgs;}; # functions
   modules = import ./modules; # NixOS modules
@@ -22,10 +20,5 @@ in {
   waybar-vd = pkgs.callPackage ./pkgs/waybar-vd {};
   mihomo-smart = pkgs.callPackage ./pkgs/mihomo-smart.nix {};
   # Fladder 使用 IFD，在纯评估模式下会失败，使用 tryEval 捕获
-  Fladder = let
-    result = builtins.tryEval (pkgs.callPackage ./pkgs/Fladder.nix {});
-  in
-    if result.success
-    then result.value
-    else placeholder;
+  Fladder = pkgs.callPackage ./pkgs/Fladder.nix {};
 }
