@@ -20,6 +20,7 @@
   libdovi,
   makeDesktopItem,
   copyDesktopItems,
+  runCommand,
   ...
 }: let
   stdenv' =
@@ -34,25 +35,20 @@
     rev = "v${version}";
     hash = "sha256-Rpnf4fYsChbCsezBtmqQ8xkaj6HmfnDPvZLSZjPEPJ0=";
   };
-  src-pkg = stdenv.mkDerivation {
-    pname = "${pname}-pubspec";
-    inherit version src;
-    dontBuild = true;
-    nativeBuildInputs = [yq-go];
-    installPhase = ''
-      mkdir -p $out
-      # pubspec.lock (yaml) to json
-      yq -e -o=json . pubspec.lock > $out/pubspec.lock
-    '';
-  };
   media_kit_rev = "46bf02c1a49be19bee4e9c2c41bc2209b4884c33";
   media_kit_hash = "sha256-Vw/XMFa4TBHS69fJcnCOKfEuTCuZ+Yqdz/WPMLIXQEk=";
+  importYaml = file: let
+    converted = runCommand "converted-yaml.json" {nativeBuildInputs = [yq-go];} ''
+      yq -e -o=json . ${file} > $out
+    '';
+  in
+    builtins.fromJSON (builtins.readFile converted);
 in
   (flutter.override {
     stdenv = stdenv';
   }).buildFlutterApplication rec {
     inherit pname version src;
-    pubspecLock = lib.importJSON "${src-pkg}/pubspec.lock";
+    pubspecLock = importYaml "${src}/pubspec.lock";
     gitHashes = {
       media_kit = media_kit_hash;
       media_kit_libs_android_video = media_kit_hash;
