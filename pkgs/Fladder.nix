@@ -203,6 +203,8 @@ in
       cp ${src}/icons/production/fladder_icon_desktop.png $out/share/pixmaps/fladder_icon_desktop.png
     '';
 
+    preferLocalBuild = true;
+
     meta = with lib; {
       description = "A Simple Jellyfin Frontend built on top of Flutter.";
       homepage = "https://github.com/DonutWare/Fladder";
