@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "hitokoto-osc";
     repo = "sentences-bundle";
-    rev = "v${pname}";
+    rev = "v${version}";
     hash = "sha256-k1NgVvA55DMwGuWvw8zbJ6BUftqjHaZcxjAyDXzMU58=";
   };
   nativeBuildInputs = [
