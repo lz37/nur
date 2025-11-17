@@ -169,7 +169,7 @@ in
       homepage = "https://github.com/Radekyspec/StartLive";
       license = licenses.gpl3Only;
       platforms = platforms.linux;
-      maintainers = [];
       mainProgram = "startlive";
+      sourceProvenance = with sourceTypes; [fromSource];
     };
   }
