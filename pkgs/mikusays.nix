@@ -22,7 +22,7 @@ rustPlatform.buildRustPackage (finalAttrs: rec {
   cargoHash = "sha256-X1jGdiDyKgeu+O/rhv5NEr9yr9X6C7Rng/+XdnM9s8A=";
 
   # 允许使用不稳定的 Rust 特性
-  RUSTC_BOOTSTRAP = "1";
+  RUSTC_BOOTSTRAP = 1;
 
   meta = with lib; {
     description = "A `cowsay` clone with Hatsune Miku ASCII art and speech bubbles.";
