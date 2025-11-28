@@ -17,11 +17,13 @@ rustPlatform.buildRustPackage (finalAttrs: rec {
   postPatch = ''
     substituteInPlace tests/integration_tests.rs \
       --replace-fail 'Command::new("target/debug/mikusays")' 'Command::new(env!("CARGO_BIN_EXE_mikusays"))'
+
+    # 在 main.rs 开头添加 feature flag
+    sed -i '1i #![feature(let_chains)]' src/main.rs
   '';
 
   cargoHash = "sha256-X1jGdiDyKgeu+O/rhv5NEr9yr9X6C7Rng/+XdnM9s8A=";
 
-  # 允许使用不稳定的 Rust 特性
   RUSTC_BOOTSTRAP = 1;
 
   meta = with lib; {
