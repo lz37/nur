@@ -21,6 +21,8 @@ rustPlatform.buildRustPackage (finalAttrs: rec {
 
   cargoHash = "sha256-X1jGdiDyKgeu+O/rhv5NEr9yr9X6C7Rng/+XdnM9s8A=";
 
+  RUSTC_BOOTSTRAP = true;
+
   meta = with lib; {
     description = "A `cowsay` clone with Hatsune Miku ASCII art and speech bubbles.";
     homepage = "https://github.com/xxanqw/mikusays";
