@@ -54,13 +54,13 @@ let
 in
 python3Packages.buildPythonApplication rec {
   pname = "StartLive";
-  version = "0.8.5";
+  version = "0.8.7";
 
   src = fetchFromGitHub {
     owner = "Radekyspec";
     repo = pname;
     rev = version;
-    hash = "sha256-BHb7gHhojnNwWtTms0c7+rA4sssO/gX0WN48NavIWOg=";
+    hash = "sha256-UUumeUsTjb1a3r1yUi/XOJ0NMoH4F5dx+jkgIUGTB7o=";
   };
 
   format = "other";
