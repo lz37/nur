@@ -56,8 +56,11 @@ in {
   zsh-url-highlighter = pkgs.callPackage ./pkgs/zsh-url-highlighter.nix {};
   waybar-vd = pkgs.callPackage ./pkgs/waybar-vd {};
   mihomo-smart = pkgs.callPackage ./pkgs/mihomo-smart.nix {};
-  # Fladder 使用 IFD，在纯评估模式下会失败，使用 tryEval 捕获
-  Fladder = pkgs.callPackage ./pkgs/Fladder.nix {};
+  # Fladder 使用 IFD，在纯评估模式下会失败，使用 tryEval 包裹
+  Fladder = let
+    result = builtins.tryEval (pkgs.callPackage ./pkgs/Fladder.nix {});
+  in
+    if result.success then result.value else null;
   StartLive = pkgs.callPackage ./pkgs/StartLive.nix {};
   bilibili_live_tui = pkgs.callPackage ./pkgs/bilibili_live_tui.nix {};
 }
