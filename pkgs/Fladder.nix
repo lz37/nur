@@ -1,6 +1,7 @@
 {
   lib,
   fetchFromGitHub,
+  fetchurl,
   stdenv,
   autoPatchelfHook,
   flutter,
@@ -106,7 +107,7 @@ in
           pname = "mdk-sdk-linux";
           version = "0.35.0";
 
-          src = builtins.fetchurl {
+          src = fetchurl {
             url = "https://github.com/wang-bin/mdk-sdk/releases/download/v${version}/${pname}-x64.tar.xz";
             sha256 = "044yw4iln4qq6zshmp3f5k08dq8rl6vsnh3xn5ldh04lh4sxm88r";
           };
