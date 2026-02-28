@@ -1,11 +1,7 @@
 {
   lib,
-  config,
   fetchFromGitHub,
-  cudaSupport ? config.cudaSupport,
-  cudaPackages ? { },
   stdenv,
-  autoAddDriverRunpath,
   autoPatchelfHook,
   flutter,
   yq-go,
@@ -25,17 +21,15 @@
   ...
 }:
 let
-  stdenv' = if cudaSupport then cudaPackages.backendStdenv else stdenv;
   pname = "Fladder";
-  version = "0.9.0";
+  version = "0.10.1";
   src = fetchFromGitHub {
     owner = "DonutWare";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-IX3qbIgfi9d8rP24yIGlBzi5l28YQWnvLD+dD+7uIZc=";
+    hash = "sha256-lmtEgBxCmEYcckhSAXhMPDzNQBluTyW0yjkt6Rr9byA=";
   };
-  media_kit_rev = "e3c72e76a7005d97c6f2b20ad3e38c5d52ed85b5";
-  media_kit_hash = "sha256-oJQ9sRQI4HpAIzoS995yfnzvx5ZzIubVANzbmxTt6LE=";
+  media_kit_hash = "sha256-wQ5HOztwfJRymo+GzgTgHcRS/rzJfZcvBul5teSf/h8=";
   importYaml =
     file:
     let
@@ -45,9 +39,7 @@ let
     in
     builtins.fromJSON (builtins.readFile converted);
 in
-(flutter.override {
-  stdenv = stdenv';
-}).buildFlutterApplication
+flutter.buildFlutterApplication
   rec {
     inherit pname version src;
     pubspecLock = importYaml "${src}/pubspec.lock";
@@ -76,8 +68,8 @@ in
           donutware-src = fetchFromGitHub {
             owner = "DonutWare";
             repo = "media-kit";
-            rev = media_kit_rev;
-            hash = "sha256-oJQ9sRQI4HpAIzoS995yfnzvx5ZzIubVANzbmxTt6LE=";
+            rev = "34bde583caa800bf2beb06ec6287c943eda24296";
+            hash = "sha256-wQ5HOztwfJRymo+GzgTgHcRS/rzJfZcvBul5teSf/h8=";
           };
         in
         stdenv.mkDerivation {
@@ -142,7 +134,19 @@ in
 
           dontBuild = true;
 
+
           postPatch = ''
+            # 预创建 lib/src/version.h 文件，避免 CMake 尝试写入只读位置
+            mkdir -p lib/src
+            echo '#pragma once' > lib/src/version.h
+            echo '#define FVP_VERSION "${version}"' >> lib/src/version.h
+
+            # 修改 cmake/deps.cmake 禁用 file(WRITE) 调用
+            if [ -f cmake/deps.cmake ]; then
+              substituteInPlace cmake/deps.cmake \
+                --replace 'file(WRITE ''${VERSION_HEADER_FILE}' '# file(WRITE ''${VERSION_HEADER_FILE}'
+            fi
+
             # 禁用网络下载，使用预下载的 mdk-sdk
             if [ -f linux/CMakeLists.txt ]; then
               substituteInPlace linux/CMakeLists.txt \
@@ -167,11 +171,6 @@ in
       pkg-config
       autoPatchelfHook
       copyDesktopItems
-    ]
-    ++ lib.optionals cudaSupport [
-      autoAddDriverRunpath
-      cudaPackages.cuda_nvcc
-      (lib.getDev cudaPackages.cuda_cudart)
     ];
     buildInputs = [
       mpv
@@ -184,11 +183,7 @@ in
       libdovi
       libdvdcss
     ]
-    ++ mpv.unwrapped.buildInputs
-    ++ lib.optionals cudaSupport [
-      cudaPackages.cudatoolkit
-      cudaPackages.cuda_cudart
-    ];
+    ++ mpv.unwrapped.buildInputs;
     desktopItems = [
       (makeDesktopItem {
         name = pname;
@@ -211,8 +206,20 @@ in
       cp ${src}/icons/production/fladder_icon_desktop.png $out/share/pixmaps/fladder_icon_desktop.png
     '';
 
-    preferLocalBuild = true;
+    postPatch = ''
+      # 修复 RepeatMode 命名冲突 - Flutter 3.41.2 添加了新的 RepeatMode，与 Fladder 的冲突
+      # 将 Fladder 的 RepeatMode 使用前缀
+      for file in lib/models/playback/direct_playback_model.dart lib/models/playback/transcode_playback_model.dart; do
+        if [ -f "$file" ]; then
+          # 将 RepeatMode 替换为 fpd.RepeatMode (假设使用 fully qualified prefix)
+          sed -i 's/RepeatMode\./fpd.RepeatMode./g' "$file" 2>/dev/null || true
+          # 在导入语句中添加 fpd 前缀
+          sed -i '1i\import "package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart" as fpd;' "$file" 2>/dev/null || true
+        fi
+      done
+    '';
 
+    preferLocalBuild = true;
     meta = with lib; {
       description = "A Simple Jellyfin Frontend built on top of Flutter.";
       homepage = "https://github.com/DonutWare/Fladder";
