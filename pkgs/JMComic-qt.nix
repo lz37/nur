@@ -6,53 +6,37 @@
   makeDesktopItem,
   copyDesktopItems,
   makeWrapper,
-  libxcb,
-  libxcb-cursor,
-  libxcb-wm,
-  libxcb-image,
-  libxcb-keysyms,
-  libxcb-render-util,
+  qt6,
+  vulkan-loader,
+  sr-vulkan,
+  addDriverRunpath,
   ...
 }:
 let
-  # commonx package (not in nixpkgs)
   commonx = python3Packages.buildPythonPackage rec {
     pname = "commonx";
     version = "0.6.39";
     format = "setuptools";
-
     src = fetchPypi {
       inherit pname version;
       hash = "sha256-Lo/kHgeMkhUvlZO1qOeUoLdINU4rhz7mFjAGnXRad9U=";
     };
-
     doCheck = false;
   };
 
-  # jmcomic package (not in nixpkgs)
   jmcomic = python3Packages.buildPythonPackage rec {
     pname = "jmcomic";
     version = "2.6.9";
     pyproject = true;
-
     src = fetchPypi {
       inherit pname version;
       hash = "sha256-Pfrtc6IQ3Ha7jZ1edwHgeTblEgBiSRrSeqShqskPcNc=";
     };
-
     build-system = with python3Packages; [ setuptools ];
-
     dependencies = with python3Packages; [
-      curl-cffi
-      pillow
-      pycryptodome
-      pyyaml
-      commonx
+      curl-cffi pillow pycryptodome pyyaml commonx
     ];
-
-    # Skip tests as they require network
     doCheck = false;
-
     pythonImportsCheck = [ "jmcomic" ];
   };
 in
@@ -72,77 +56,73 @@ python3Packages.buildPythonApplication rec {
   nativeBuildInputs = [
     copyDesktopItems
     makeWrapper
+    addDriverRunpath
   ];
 
   buildInputs = [
-    libxcb-cursor
-    libxcb
-    libxcb-wm
-    libxcb-image
-    libxcb-keysyms
-    libxcb-render-util
+    qt6.qtbase
+    qt6.qtwayland
+    vulkan-loader
   ];
 
   propagatedBuildInputs = with python3Packages; [
-    pyside6
-    pillow
-    lxml
-    pycryptodomex
-    pysocks
-    natsort
-    curl-cffi
-    webdavclient3
-    tqdm
-    pysmb
-    beautifulsoup4
-    setuptools # provides distutils compatibility for Python 3.12+
-    (httpx.overridePythonAttrs (
-      finalAttrs: with finalAttrs; {
-        dependencies = dependencies ++ (with optional-dependencies; http2 ++ socks);
-      }
-    ))
+    pyside6 pillow lxml pycryptodomex pysocks natsort curl-cffi
+    webdavclient3 tqdm pysmb beautifulsoup4 setuptools
+    (httpx.overridePythonAttrs (finalAttrs: {
+      dependencies = finalAttrs.dependencies ++ (with finalAttrs.optional-dependencies; http2 ++ socks);
+    }))
     jmcomic
+    sr-vulkan  # This now includes models
   ];
 
   dontBuild = true;
   dontConfigure = true;
+  dontWrapQtApps = true;
 
   installPhase = ''
     runHook preInstall
 
-    # Create application directory
     mkdir -p $out/share/jmcomic-qt
-
-    # Copy all Python source code and resources
     cp -r src/* $out/share/jmcomic-qt/
     cp -r lib $out/share/jmcomic-qt/
 
-    # Create launcher script
+    # Link sr_vulkan from its site-packages
+    for site_packages in ${sr-vulkan}/lib/python*/site-packages; do
+      if [ -d "$site_packages/sr_vulkan" ]; then
+        ln -s "$site_packages/sr_vulkan" $out/share/jmcomic-qt/
+        # Also link model packages that are now in sr-vulkan's site-packages
+        for model_path in $site_packages/sr_vulkan_model_*; do
+          if [ -d "$model_path" ]; then
+            ln -s "$model_path" $out/share/jmcomic-qt/
+          fi
+        done
+        break
+      fi
+    done
+
     mkdir -p $out/bin
-    cat > $out/bin/JMComic-qt <<EOF
+
+    cat > $out/bin/JMComic-qt << EOF
     #!${python3Packages.python.interpreter}
     import sys
     import os
 
-    # Set installation directory
     install_dir = "$out/share/jmcomic-qt"
     sys.path.insert(0, install_dir)
     os.chdir(install_dir)
 
-    # Set library path for bundled libcurl-impersonate
     os.environ["LD_LIBRARY_PATH"] = os.path.join(install_dir, "lib", "linux") + ":" + os.environ.get("LD_LIBRARY_PATH", "")
 
-    # Launch main program
     exec(compile(open(os.path.join(install_dir, "start.py")).read(), "start.py", "exec"))
     EOF
+
     chmod +x $out/bin/JMComic-qt
 
-    # Wrap with Qt environment for PySide6 platform plugins
     wrapProgram $out/bin/JMComic-qt \
-      --set QT_PLUGIN_PATH "${python3Packages.pyside6}/${python3Packages.python.sitePackages}/PySide6/Qt6/plugins" \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libxcb-cursor libxcb ]}"
+      --set QT_PLUGIN_PATH "${qt6.qtbase}/lib/qt-6/plugins" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath buildInputs}" \
+      --prefix LD_LIBRARY_PATH : "${vulkan-loader}/lib"
 
-    # Install icon
     mkdir -p $out/share/pixmaps
     cp $src/res/icon/logo_round.png $out/share/pixmaps/JMComic.png
 
@@ -158,10 +138,7 @@ python3Packages.buildPythonApplication rec {
       icon = "JMComic";
       terminal = false;
       type = "Application";
-      categories = [
-        "Graphics"
-        "Network"
-      ];
+      categories = [ "Graphics" "Network" ];
     })
   ];
 
