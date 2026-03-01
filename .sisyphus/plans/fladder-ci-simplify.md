@@ -67,11 +67,11 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
 2. 修改 `.github/workflows/build.yml` 添加检查步骤
 
 ### Definition of Done
-- [ ] `fladder-update.yml` 已删除
-- [ ] `build.yml` 包含 pubspec-lock.json 检查逻辑
-- [ ] 仅在 `pkgs/Fladder/` 变更时触发检查
-- [ ] JSON 不同时 bot 能正确提交
-- [ ] bot commit 后不会循环触发检查
+- [x] `fladder-update.yml` 已删除
+- [x] `build.yml` 包含 pubspec-lock.json 检查逻辑
+- [x] 仅在 `pkgs/Fladder/` 变更时触发检查
+- [x] JSON 不同时 bot 能正确提交
+- [x] bot commit 后不会循环触发检查
 
 ### Must Have
 - 检查使用 `nix run .#Fladder.pubspecLock2Json`
@@ -186,7 +186,7 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
 
 ---
 
-- [ ] F1. **Plan Compliance Audit**
+- [x] F1. **Plan Compliance Audit**
   - Verify `fladder-update.yml` is deleted
   - Verify sync check uses correct nix command
   - Verify loop prevention works
@@ -202,8 +202,8 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
 
 ## Success Criteria
 
-- [ ] `fladder-update.yml` 已删除
-- [ ] `build.yml` 包含同步检查
-- [ ] 仅 Fladder 变更时检查
-- [ ] JSON 同步逻辑正确
-- [ ] 无循环触发问题
+- [x] `fladder-update.yml` 已删除
+- [x] `build.yml` 包含同步检查
+- [x] 仅 Fladder 变更时检查
+- [x] JSON 同步逻辑正确
+- [x] 无循环触发问题
