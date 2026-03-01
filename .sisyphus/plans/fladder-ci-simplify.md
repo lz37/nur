@@ -207,3 +207,14 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
 - [x] 仅 Fladder 变更时检查
 - [x] JSON 同步逻辑正确
 - [x] 无循环触发问题
+## Fix History
+
+- **2026-03-01**: Removed incorrect `if` condition at job level that was incorrectly skipping bot commits. Bot commits should trigger normal build flow - the `exit 1` in sync step already handles stopping the workflow when json is updated.
+- Fixed shellcheck warnings (SC2086, SC2046) for proper quoting in nix evaluation step.
+  - The `exit 1` in sync step already handles stopping the workflow when json is updated
+  - Correct flow: bot commit -> triggers new workflow -> normal build (no skip needed)
+  - The if condition was wrong: bot commits should NOT be skipped at job level
+  - Commit: `04e6ddf` fix(ci): remove incorrect bot skip condition from build workflow
+- [x] **Fixed incorrect if condition** - Removed job-level `if` that incorrectly skipped bot commits
+## Post-Completion Fix
+---
