@@ -42,6 +42,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+      - name: Install nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: "${{ matrix.nixPath }}"
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Check paths
         uses: dorny/paths-filter@v3
         id: filter
@@ -69,13 +76,6 @@ jobs:
           git commit -m "chore(fladder): sync pubspec-lock.json"
           git push
           exit 1  # Exit to let new commit trigger build
-      - name: Install nix
-        uses: cachix/install-nix-action@v31
-        with:
-          nix_path: "${{ matrix.nixPath }}"
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Show nixpkgs version
         run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - name: Setup cachix
