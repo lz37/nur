@@ -217,4 +217,7 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
   - Commit: `04e6ddf` fix(ci): remove incorrect bot skip condition from build workflow
 - [x] **Fixed incorrect if condition** - Removed job-level `if` that incorrectly skipped bot commits
 ## Post-Completion Fix
+- [x] **Fixed nix installation order** - Moved "Install nix" step before "Check paths" and "Check pubspec-lock.json sync" so nix is available when running `nix run .#Fladder.pubspecLock2Json`
+  - Error was: `nix: command not found` in sync check step
+  - Commit: `1a005f3` fix(ci): move nix installation before pubspec-lock sync check
 ---
