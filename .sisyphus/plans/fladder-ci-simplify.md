@@ -176,10 +176,10 @@ diff pkgs/Fladder/pubspec-lock.json /tmp/new-pubspec-lock.json
   - `dorny/paths-filter` action 文档
 
   **Acceptance Criteria**:
-  - [ ] 仅在 `pkgs/Fladder/` 变更时检查
-  - [ ] JSON 相同时正常 build
-  - [ ] JSON 不同时 bot 提交
-  - [ ] bot commit 后不循环
+  - [x] 仅在 `pkgs/Fladder/` 变更时检查
+  - [x] JSON 相同时正常 build
+  - [x] JSON 不同时 bot 提交
+  - [x] bot commit 后不循环
 
   **Commit**: YES
   - Message: `refactor(ci): add pubspec-lock.json sync check for Fladder`
