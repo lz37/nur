@@ -38,10 +38,6 @@ jobs:
           - nixpkgs=https://github.com/NixOS/nixpkgs/archive/refs/heads/nixpkgs-unstable.tar.gz
           - nixpkgs=https://github.com/NixOS/nixpkgs/archive/refs/heads/nixos-unstable.tar.gz
           - nixpkgs=https://github.com/NixOS/nixpkgs/archive/refs/heads/nixos-25.11.tar.gz
-    if: |
-      github.actor != 'github-actions[bot]' ||
-      !(startsWith(github.event.head_commit.message, 'chore(fladder): update to v') ||
-        startsWith(github.event.head_commit.message, 'chore(fladder): sync pubspec-lock.json'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -97,8 +93,8 @@ jobs:
             --option restrict-eval true \
             --option allow-import-from-derivation true \
             --drv-path --show-trace \
-            -I nixpkgs=$(nix-instantiate --find-file nixpkgs) \
-            -I $PWD
+            -I nixpkgs="$(nix-instantiate --find-file nixpkgs)" \
+            -I "$PWD"
       - name: Build nix packages
         run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs
       - name: Trigger NUR update
