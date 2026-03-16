@@ -273,6 +273,7 @@ in
   buildEnv rec {
     pname = "agentsys";
     version = resourceHandler.agentsys.r;
+    name = "${pname}-${version}";
     paths = components;
 
     meta = with lib; {
