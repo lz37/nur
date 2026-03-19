@@ -41,6 +41,8 @@
 | `zsh-url-highlighter` | Zsh URL syntax highlighting |
 | `agentic-contract` | Policy engine CLI for AI agents |
 | `agentic-contract-mcp` | MCP server for AgenticContract |
+| `mcp-cli` | Lightweight CLI to interact with MCP servers |
+| `snip` | CLI proxy that reduces LLM token consumption by filtering shell output |
 
 ## Usage
 
