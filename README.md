@@ -39,6 +39,8 @@
 | `waybar-vd` | Waybar with custom configuration |
 | `sddm-eucalyptus-drop` | SDDM theme |
 | `zsh-url-highlighter` | Zsh URL syntax highlighting |
+| `agentic-contract` | Policy engine CLI for AI agents |
+| `agentic-contract-mcp` | MCP server for AgenticContract |
 
 ## Usage
 
