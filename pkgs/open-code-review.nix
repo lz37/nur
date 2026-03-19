@@ -1,10 +1,11 @@
 {
-  cacert,
   fetchFromGitHub,
+  fetchPnpmDeps,
   lib,
   makeWrapper,
   nodejs_20,
   pnpm_9,
+  pnpmConfigHook,
   stdenvNoCC,
 }:
 let
@@ -18,52 +19,32 @@ let
     hash = "sha256-1bquZYsM4+OPFcs1qkXuXgKFCB2zE1FVtgXMFXM/Kvw=";
   };
 
-  deployOut = stdenvNoCC.mkDerivation {
-    pname = "${pname}-deploy";
-    inherit version src;
-
-    nativeBuildInputs = [
-      cacert
-      nodejs_20
-      pnpm_9
-    ];
-
-    env.CI = "1";
-
-    dontConfigure = true;
-    dontFixup = true;
-
-    buildPhase = ''
-      runHook preBuild
-
-      export HOME="$TMPDIR"
-      pnpm install --frozen-lockfile --ignore-scripts
-      pnpm build:cli
-      pnpm --filter @open-code-review/cli deploy --prod "$out"
-
-      runHook postBuild
-    '';
-
-    installPhase = ''
-      runHook preInstall
-      runHook postInstall
-    '';
-
-    outputHashMode = "recursive";
-    outputHashAlgo = "sha256";
-    outputHash = "sha256-0Ef+MUm1+9IoALXcamgcqSbT7l5hmkzRkRn0WctDdx0=";
+  pnpmDeps = fetchPnpmDeps {
+    inherit pname version src;
+    fetcherVersion = 3;
+    hash = "sha256-b7MSyps0l5BZLc2deEheA2fFpRZQhIDMebUK1D1x15A=";
   };
 in
 stdenvNoCC.mkDerivation {
-  pname = "open-code-review";
-  inherit version;
+  inherit pname version src pnpmDeps;
 
   nativeBuildInputs = [
     makeWrapper
     nodejs_20
+    pnpm_9
+    pnpmConfigHook
   ];
 
-  dontUnpack = true;
+  env.CI = "1";
+
+  buildPhase = ''
+    runHook preBuild
+
+    pnpm install --offline --frozen-lockfile --ignore-scripts
+    pnpm build:cli
+
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
@@ -71,13 +52,16 @@ stdenvNoCC.mkDerivation {
     local packageOut="$out/lib/node_modules/${pname}"
 
     mkdir -p "$out/bin"
-    mkdir -p "$packageOut"
-    cp -r ${deployOut}/. "$packageOut"/
-    mkdir -p "$out/build/source/packages"
-    ln -s ../../../lib/node_modules/${pname} "$out/build/source/packages/cli"
+    mkdir -p "$packageOut/packages"
+
+    cp package.json pnpm-lock.yaml pnpm-workspace.yaml "$packageOut"/
+    cp -a node_modules "$packageOut"/
+    cp -a packages/cli "$packageOut/packages/"
+    cp -a packages/agents "$packageOut/packages/"
+    cp -a packages/dashboard "$packageOut/packages/"
 
     makeWrapper ${lib.getExe nodejs_20} "$out/bin/ocr" \
-      --add-flags "$packageOut/dist/index.js"
+      --add-flags "$packageOut/packages/cli/dist/index.js"
 
     runHook postInstall
   '';
