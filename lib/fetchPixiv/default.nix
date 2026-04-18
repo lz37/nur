@@ -47,7 +47,7 @@ in
       inherit urls hash;
     };
   in
-    if saveToshare
+    if !saveToshare
     then let
       tmpPixiv = stdenvNoCC.mkDerivation {
         name = "pixiv-${idString}-p${toString p}";
