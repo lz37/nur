@@ -89,6 +89,7 @@ in
         dontUnpack = true;
         dontBuild = true;
         dontFixup = true;
+        nativeBuildInputs = [file];
         src = rawPixiv;
         installPhase = ''
           # Detect real image type via file(1) and rename accordingly
