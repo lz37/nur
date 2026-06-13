@@ -9,24 +9,6 @@
 }:
 let
   # Helper for missing packages not in nixpkgs
-  js2py = python3Packages.buildPythonPackage rec {
-    pname = "js2py";
-    version = "0.74";
-    pyproject = true;
-    src = fetchPypi {
-      pname = "Js2Py";
-      inherit version;
-      hash = "sha256-OfOmqoRpGA77o8hncnHfJ8MTMv0bRx3xryr1i4e4ly8=";
-    };
-    build-system = with python3Packages; [ setuptools ];
-    propagatedBuildInputs = with python3Packages; [
-      pyjsparser
-      tzlocal
-      six
-    ];
-    doCheck = false;
-  };
-
   python-box = python3Packages.buildPythonPackage rec {
     pname = "python-box";
     version = "7.3.2";
@@ -71,22 +53,6 @@ let
     build-system = with python3Packages; [ poetry-core ];
     propagatedBuildInputs = with python3Packages; [
       prompt-toolkit
-    ];
-    doCheck = false;
-  };
-
-  pyexecjs = python3Packages.buildPythonPackage rec {
-    pname = "pyexecjs";
-    version = "1.5.1";
-    pyproject = true;
-    src = fetchPypi {
-      pname = "PyExecJS";
-      inherit version;
-      hash = "sha256-NMwdBwl2kYGD/3vcCtcfgVeokcknCMAMX7v/enafUFw=";
-    };
-    build-system = with python3Packages; [ setuptools ];
-    propagatedBuildInputs = with python3Packages; [
-      six
     ];
     doCheck = false;
   };
@@ -165,17 +131,15 @@ python3Packages.buildPythonApplication rec {
     pyyaml
     pywebview
     # Local helper packages for missing deps
-    js2py
     python-box
     readability-lxml
     questionary
-    pyexecjs
     pyease-grpc
   ];
 
   pythonImportsCheck = [ "lncrawl" ];
 
-  pythonRemoveDeps = [ "nodriver" ];
+  pythonRemoveDeps = [ "nodriver" "lncrawl-scraper" "exejs" ];
 
   doCheck = false;
 
