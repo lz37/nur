@@ -8,6 +8,41 @@
   calibre,
 }:
 let
+  # exejs — JS execution engine, replaces PyExecJS
+  exejs = python3Packages.buildPythonPackage rec {
+    pname = "exejs";
+    version = "0.0.7";
+    format = "wheel";
+    src = fetchurl {
+      url = "https://files.pythonhosted.org/packages/b4/2f/a9786ef0130b2de80ed2273a43e0ca7c86333ac61de6b6c9b4307b8fd66b/exejs-0.0.7-py3-none-any.whl";
+      hash = "sha256-uqTccszB3niA91z1cIV/1Q7Tj8hGlIhI1x6rQy6/sgc=";
+    };
+    doCheck = false;
+  };
+
+  # lncrawl-scraper — HTTP scraper with Cloudflare bypass (extracted from bundled cloudscraper)
+  lncrawl-scraper = python3Packages.buildPythonPackage rec {
+    pname = "lncrawl-scraper";
+    version = "0.1.2";
+    pyproject = true;
+    src = fetchPypi {
+      pname = "lncrawl_scraper";
+      inherit version;
+      hash = "sha256-mY4qnavcN1Q9nR0OGxKNB6PBLQHISMo4edbF1QbA5yc=";
+    };
+    build-system = with python3Packages; [ setuptools ];
+    propagatedBuildInputs = with python3Packages; [
+      beautifulsoup4
+      brotli
+      lxml
+      requests
+      exejs
+    ];
+    # curl-cffi is an optional C/Rust extension used by [all] extra
+    pythonRemoveDeps = [ "curl-cffi" ];
+    doCheck = false;
+  };
+
   # Helper for missing packages not in nixpkgs
   python-box = python3Packages.buildPythonPackage rec {
     pname = "python-box";
@@ -131,6 +166,8 @@ python3Packages.buildPythonApplication rec {
     pyyaml
     pywebview
     # Local helper packages for missing deps
+    exejs
+    lncrawl-scraper
     python-box
     readability-lxml
     questionary
@@ -139,7 +176,7 @@ python3Packages.buildPythonApplication rec {
 
   pythonImportsCheck = [ "lncrawl" ];
 
-  pythonRemoveDeps = [ "nodriver" "lncrawl-scraper" "exejs" ];
+  pythonRemoveDeps = [ "nodriver" ];
 
   doCheck = false;
 
