@@ -15,7 +15,7 @@ let
     format = "wheel";
     src = fetchurl {
       url = "https://files.pythonhosted.org/packages/b4/2f/a9786ef0130b2de80ed2273a43e0ca7c86333ac61de6b6c9b4307b8fd66b/exejs-0.0.7-py3-none-any.whl";
-      hash = "sha256-uqTccszB3niA91z1cIV/1Q7Tj8hGlIhI1x6rQy6/sgc=";
+      hash = "sha256-upLNcuzFBweJvSQYV49p/i6h3plCwKkBhUSehV8oMgE=";
     };
     doCheck = false;
   };
@@ -28,7 +28,7 @@ let
     src = fetchPypi {
       pname = "lncrawl_scraper";
       inherit version;
-      hash = "sha256-mY4qnavcN1Q9nR0OGxKNB6PBLQHISMo4edbF1QbA5yc=";
+      hash = "sha256-mYrilNrcdVQ9bIpHNu8E1IcaMAQIyyfgEUfRlF4GyTc=";
     };
     build-system = with python3Packages; [ setuptools ];
     propagatedBuildInputs = with python3Packages; [
