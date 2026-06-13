@@ -30,7 +30,7 @@ let
       inherit version;
       hash = "sha256-mYrilNrcdVQ9bIpHNu8E1IcaMAQIyyfgEUfRlF4GyTc=";
     };
-    build-system = with python3Packages; [ setuptools ];
+    build-system = with python3Packages; [ hatchling ];
     propagatedBuildInputs = with python3Packages; [
       beautifulsoup4
       brotli
