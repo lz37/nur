@@ -37,6 +37,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ];
 
     dontConfigure = true;
+    dontFixup = true;
 
     buildPhase = ''
       runHook preBuild
@@ -59,7 +60,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       runHook postInstall
     '';
 
-    outputHash = "sha256-zph/HyBehmi/qfRaU/2zpwvOKZfFrRz2yCM31QpxfwI=";
+    outputHash = "sha256-R0iREbU/o4tf6OojvDzBkEVWQAXb5IwHFYX4g50CZ/8=";
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
