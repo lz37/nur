@@ -103,30 +103,29 @@ Using raw `cargo build` + manual rename would miss all three.
 | `cargoHash` | `sha256-...` | Vendored crate tarballs (502 crates.io deps, zero git deps) |
 | `RUSTC_BOOTSTRAP` | `"1"` | Crate uses `#![feature(alloc_error_hook)]` |
 | `buildType` | `"ci"` | Uses upstream `[profile.ci]` (thin LTO, faster than fat LTO) |
-| `TARGET_VARIANT` | `"baseline"` (x86_64) | Deterministic: no host AVX2 detection |
+| `TARGET_VARIANT` | `null` | Auto-detect: AVX2 → modern/v3, else baseline/v2, ARM → native |
 | `dontStrip` | `true` | `.node` is a loaded binary addon, stripping may break it |
 | `doCheck` | `false` | Tests fail in sandbox (process session isolation) |
 
-### Updating
-1. Change `version` and `src.hash`
-2. Set `cargoHash = lib.fakeHash`
-3. Build: `nix-build -A oh-my-pi.piNatives`
-4. Replace `cargoHash` with the real hash
+### x86_64 CPU variant
+
+`TARGET_VARIANT` 设为 `null`，让上游 `build-native.ts` 自动检测：
+- 构建机有 AVX2 → `modern`（`x86-64-v3`）
+- 无 AVX2 → `baseline`（`x86-64-v2`）
+- ARM64 → `native`
+
+用户可通过以下方式覆盖：
+- `nixpkgs.config.gccArch = "x86-64-v4"`（nix.conf 的 `gccarch-x86-64-v4`）
+- 直接传 `RUSTFLAGS="-C target-cpu=x86-64-v4"` 或 `TARGET_VARIANT=baseline`
+
+之前硬编码 `TARGET_VARIANT=baseline` 已移除，因为 NUR 包的用户
+通常本地构建（不是 CI 缓存分发），自动检测能获得最优性能。
+需要缓存一致性的场景可以显式指定。
 
 ### Hazards
-- **Source must be writable**: `preBuild` runs `chmod -R u+w .` because
-  napi-rs CLI tries to create `target/` inside the source tree.
-- **CARGO_TARGET_DIR** must point to `$TMPDIR/cargo-target` — the napi
-  script inherits this for its internal cargo invocation.
-- **node_modules must be available**: The napi-rs CLI (`@napi-rs/cli`)
-  resolves its own dependencies from node_modules. `preBuild` copies
-  the FOD into the build tree.
 - **x86_64 baseline vs modern**: Upstream build-native.ts auto-detects
-  AVX2 support on the build host. We force `TARGET_VARIANT=baseline` and
-  `RUSTFLAGS=-C target-cpu=x86-64-v2` via the napi script. Modern CPUs
-  will fall back to baseline at runtime (the loader tries `modern` first,
-  then `baseline`). Building both variants is possible but doubles the
-  build time and cache size.
+  AVX2 support on the build host. Modern CPUs will fall back to baseline
+  at runtime (the loader tries `modern` first, then `baseline`).
 - **aarch64**: No variant suffix — just `pi_natives.linux-arm64.node`.
 
 ---

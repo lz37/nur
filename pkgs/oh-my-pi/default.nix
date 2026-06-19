@@ -98,11 +98,14 @@ let
     ];
 
     RUSTC_BOOTSTRAP = "1";
-
+    
+    # Use gcc.arch if user configured it (nix.conf gccarch-* → nixpkgs.config.gccArch)
+    # Otherwise let upstream auto-detect: avx2 → modern/v3, else baseline/v2
     TARGET_PLATFORM = "linux";
     TARGET_ARCH = rustArch;
-    TARGET_VARIANT = if isX86 then "baseline" else null;
-
+    TARGET_VARIANT = null;
+    RUSTFLAGS = let arch = stdenvNoCC.hostPlatform.gcc.arch or null;
+    in lib.optionalString (isX86 && arch != null) "-C target-cpu=${arch}";
     buildType = "ci";
     doCheck = false;
 
