@@ -49,17 +49,14 @@ let
 
     buildPhase = ''
       runHook preBuild
-
       export HOME=$TMPDIR
       export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
-      cd "$src"
       bun install \
         --cpu="*" \
         --os="*" \
         --frozen-lockfile \
         --ignore-scripts \
         --no-progress
-
       runHook postBuild
     '';
 
