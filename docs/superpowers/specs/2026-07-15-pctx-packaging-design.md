@@ -46,7 +46,8 @@ This makes the SDK reachable as `pctx.py`, without adding an independent top-lev
 
 `default.nix` uses `rustPlatform.buildRustPackage` with a `fetchFromGitHub` source fixed to tag `v0.7.1` and a separate Cargo vendor hash. It builds only workspace package `pctx`, which provides both the `pctx` and `generate-cli-docs` binaries.
 
-The source requires `deno_core`, whose `v8` crate downloads a static library during Cargo's build script. Nix supplies that archive as a separately fixed build-time input via `RUSTY_V8_ARCHIVE`; the PCTX application itself is still compiled from source. The package must never fall back to the npm-delivered PCTX executable or allow network access during a build.
+The source requires `deno_core`, whose `v8` crate needs both a static library and generated Rust bindings during Cargo's build script. Nix supplies those as separately fixed build-time inputs through `RUSTY_V8_ARCHIVE` (a filesystem path, not a `file://` URI) and `RUSTY_V8_SRC_BINDING_PATH`; the PCTX application itself is still compiled from source. The package must never fall back to the npm-delivered PCTX executable or allow network access during a build.
+`deno` is not packaged or compiled as a standalone CLI. Cargo compiles `deno_core` as an ordinary Rust dependency of PCTX; Nix supplies the pinned V8 archive and bindings without setting `V8_FROM_SOURCE`.
 
 The package metadata identifies `pctx` as the main program and limits platform support to systems that the source build is verified to support.
 
