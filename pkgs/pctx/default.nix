@@ -1,6 +1,5 @@
 {
   cmake,
-  curl,
   fetchFromGitHub,
   fetchurl,
   lib,
@@ -67,7 +66,6 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [
     cmake
-    curl
     pkg-config
   ];
 
@@ -82,6 +80,9 @@ rustPlatform.buildRustPackage {
       "x86_64-linux"
       "aarch64-linux"
     ];
-    sourceProvenance = with sourceTypes; [ fromSource ];
+    sourceProvenance = with sourceTypes; [
+      fromSource
+      binaryNativeCode
+    ];
   };
 }

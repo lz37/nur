@@ -16,7 +16,7 @@ pkgs/pctx/
 
 `default.nix` source-builds package `pctx` from `portofcontext/pctx` tag `v${version}` with `rustPlatform.buildRustPackage` and `cargoBuildFlags = [ "-p" "pctx" ]`. This produces both `pctx` and `generate-cli-docs`.
 
-The workspace uses `deno_core`, whose `rusty_v8` dependency downloads two release inputs during Cargo's build script. Keep the build hermetic by providing both fixed inputs for every supported Linux platform:
+The workspace uses `deno_core`, whose `v8` (`rusty_v8`) dependency downloads two release inputs during Cargo's build script. Keep the build hermetic by providing both fixed inputs for every supported Linux platform:
 
 - `RUSTY_V8_ARCHIVE = "${rustyV8}"` is the static V8 archive.
 - `RUSTY_V8_SRC_BINDING_PATH = "${rustyV8Binding}"` is the matching generated Rust binding source.
@@ -27,10 +27,7 @@ The package supports only `x86_64-linux` and `aarch64-linux`. The unsupported-pl
 
 ### Swagger UI input
 
-Cargo.lock pins `utoipa-swagger-ui` 9.0.2. Its build script invokes `curl` and downloads Swagger UI v5.17.14 by default. Network access is unavailable during Nix builds, so retain both:
-
-- `curl` in `nativeBuildInputs`, because the build script explicitly invokes it;
-- a fixed `fetchurl` archive, passed as `SWAGGER_UI_DOWNLOAD_URL = "file://${swaggerUi}"`.
+Cargo.lock pins `utoipa-swagger-ui` 9.0.2. Its default build-script behavior downloads Swagger UI v5.17.14. Network access is unavailable during Nix builds, so retain a fixed `fetchurl` archive, passed as `SWAGGER_UI_DOWNLOAD_URL = "file://${swaggerUi}"`.
 
 The build script supports `file:` URLs and copies/extracts the fixed archive into its output directory. This is a hermetic static build input, not a PCTX release binary or npm wrapper.
 
@@ -60,7 +57,7 @@ The tagged Python source stores `src/pctx_client/descriptions/data` as an in-tre
 
 The CLI, Python SDK, and uv backend have separate release lines. Never synchronize their versions, Git tags, source hashes, or Cargo hash by assumption.
 
-1. Update the Rust CLI `version`, tag, source hash, and `cargoHash` independently. If Cargo.lock changes `rusty_v8`, update both matching platform archives and matching generated binding files. If it changes `utoipa-swagger-ui`, inspect that locked crate's build script before changing the fixed Swagger archive URL/hash.
+1. Update the Rust CLI `version`, tag, source hash, and `cargoHash` independently. If Cargo.lock changes the `v8` package entry, update both matching platform archives and matching generated binding files. If it changes `utoipa-swagger-ui`, inspect that locked crate's build script before changing the fixed Swagger archive URL/hash.
 2. Build the CLI and resolve one fixed-output hash at a time:
    ```bash
    nix build .#pctx
