@@ -264,7 +264,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       new_soname="libonnxruntime.so.1.$suffix"
       echo "Dedup SONAME: $lib → $new_soname"
       patchelf --set-soname "$new_soname" "$lib"
-      # Update all ELF files in this directory that reference the old SONAME
+      # Rename the file to match the new SONAME, so the dynamic linker
+      # can find it when searching RPATH directories by NEEDED name.
+      mv "$lib" "$dir/$new_soname"
+      lib="$dir/$new_soname"
       for elf in "$dir"/*; do
         [ -f "$elf" ] || continue
         patchelf --replace-needed libonnxruntime.so.1 "$new_soname" "$elf" 2>/dev/null || true
@@ -304,7 +307,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   postPhases = [ "onnxRpathPhase" ];
   onnxRpathPhase = ''
     runHook preOnnxRpath
-    for lib in $(find $out -name 'libonnxruntime.so.1' -type f 2>/dev/null); do
+    for lib in $(find $out -name 'libonnxruntime.so.1.*' -type f 2>/dev/null); do
       dir=$(dirname "$lib")
       patchelf --add-rpath "$dir" "$lib" 2>/dev/null || true
       for elf in "$dir"/*; do
