@@ -227,7 +227,7 @@ consumers.
   `configurePhase`. All patching MUST happen in `configurePhase`.
 - **Selective fixup (not `dontFixup`)**: The final derivation uses
   `dontPatchElf = true` + `dontStrip = true` + `autoPatchelfHook` +
-  `autoPatchelfIgnoreMissingDeps = true` instead of blanket `dontFixup`.
+  `autoPatchelfIgnoreMissingDeps = [ "*" ]` instead of blanket `dontFixup`.
   This preserves `$ORIGIN` RPATH entries in pre-built `.node` files (from
   npm packages like `onnxruntime-node`, `sherpa-onnx`, `@img/sharp-*`,
   `lightningcss`, `@rolldown/binding`, `@napi-rs/*`, `@tailwindcss/oxide`,
