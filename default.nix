@@ -60,7 +60,7 @@ in
   wechat-web-devtools-linux = pkgs.callPackage ./pkgs/wechat-web-devtools-linux.nix { };
   zsh-url-highlighter = pkgs.callPackage ./pkgs/zsh-url-highlighter.nix { };
   waybar-vd = pkgs.callPackage ./pkgs/waybar-vd { };
-  mihomo-oix = pkgs.callPackage ./pkgs/mihomo-oix.nix { };
+  mihomo-smart = pkgs.callPackage ./pkgs/mihomo-smart.nix { };
   StartLive = pkgs.callPackage ./pkgs/StartLive.nix { };
   bilibili_live_tui = pkgs.callPackage ./pkgs/bilibili_live_tui.nix { };
   mcp-cli = pkgs.callPackage ./pkgs/mcp-cli.nix { };

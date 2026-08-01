@@ -44,6 +44,6 @@ nix-prefetch-github <owner> <repo> --rev v<version>
 
 ## Examples
 
-- `nix-build -A mihomo-oix`
+- `nix-build -A mihomo-smart`
 - `nix-build -A LoveIwara`
 - `nix-build -A deskbrid`
