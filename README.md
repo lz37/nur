@@ -40,7 +40,6 @@ This repository currently exports **29 packages**, **1 library helper**, and pla
 
 | Package | Description |
 |---------|-------------|
-| `fortune-mod-zh` | Debian Chinese Team fortune database |
 | `fortune-mod-hitokoto` | Hitokoto fortune database |
 | `mikusays` | Hatsune Miku themed `cowsay`-style CLI |
 | `sddm-eucalyptus-drop` | Eucalyptus Drop SDDM theme |

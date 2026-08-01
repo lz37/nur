@@ -44,7 +44,6 @@ in
   # Base sr-vulkan without models (for custom use)
   sr-vulkan = pkgs.callPackage ./pkgs/sr-vulkan.nix { };
 
-  fortune-mod-zh = pkgs.callPackage ./pkgs/fortune-mod-zh.nix { };
   fortune-mod-hitokoto = pkgs.callPackage ./pkgs/fortune-mod-hitokoto.nix { };
 
   JMComic-qt = pkgs.callPackage ./pkgs/JMComic-qt.nix {
