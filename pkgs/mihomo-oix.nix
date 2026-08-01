@@ -37,7 +37,7 @@ buildGoModule rec {
   '';
 
   meta = with lib; {
-    description = "A rule-based tunnel in Go with LightGBM smart routing (fork of mihomo)";
+    description = "Another Mihomo Kernel.";
     homepage = "https://github.com/vernesong/mihomo-oix";
     license = licenses.gpl3Only;
     mainProgram = pname;
