@@ -254,6 +254,17 @@ consumers.
   files. `dontStrip` prevents stripping of `.node` addon files.
   `stdenv.cc.cc.lib` is added to `buildInputs` for `libstdc++` resolution;
   `stdenv` (regular, with cc) is passed alongside `stdenvNoCC` for this purpose.
+- **Musl sharp builds must be pruned before `fixupPhase`**: `bun install
+  --cpu="*" --os="*"` fetches every sharp platform variant, including
+  `@img/sharp-libvips-linuxmusl-*`. `autoPatchelfHook` then resolves the
+  NEEDED `libvips-cpp.so` of `@img/sharp-linux-x64` to the *musl* copy
+  (its dir wins the search), rewriting the RUNPATH to the musl libvips;
+  on glibc hosts the dlopen fails with `libc.musl-x86_64.so.1: cannot
+  open shared object file`. Symptom: the local tiny-title worker crashes
+  (`tiny-title: worker returned error`) and sessions get no titles.
+  The `installPhase` prunes `@img/sharp-libvips-linuxmusl-*` and
+  `@img/sharp-linuxmusl-*` before `fixupPhase` so autoPatchelfHook only
+  finds the glibc libvips.
 - **Read-only store**: `$out/lib/oh-my-pi` is read-only. Assets that
   would normally be generated at runtime (stats dashboard build) must
   be pre-generated at build time.

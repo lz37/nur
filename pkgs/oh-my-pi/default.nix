@@ -259,6 +259,17 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/lib/oh-my-pi/node_modules
     cp -R ${node_modules}/node_modules/. $out/lib/oh-my-pi/node_modules/
     chmod -R u+w $out/lib/oh-my-pi/node_modules
+    # ── Prune musl sharp platform packages ──
+    # `bun install --cpu="*" --os="*"` fetches every platform variant of
+    # sharp, including the musl-libc builds. autoPatchelfHook then resolves
+    # the NEEDED libvips-cpp.so of @img/sharp-linux-x64 to the *musl* copy
+    # (its dir wins the search), rewriting the RUNPATH to the musl libvips.
+    # On glibc hosts that dlopen fails with `libc.musl-x86_64.so.1: cannot
+    # open shared object file`, which breaks any code path that loads sharp
+    # (e.g. the local tiny-title worker → no session titles). Drop the musl
+    # builds so autoPatchelfHook resolves to the glibc libvips instead.
+    rm -rf $out/lib/oh-my-pi/node_modules/@img/sharp-libvips-linuxmusl-* \
+           $out/lib/oh-my-pi/node_modules/@img/sharp-linuxmusl-*
     # ── Deduplicate libonnxruntime.so.1 SONAME ──
     # Multiple onnxruntime-node versions ship libonnxruntime.so.1 with
     # the same SONAME. The dynamic linker loads only the first one
