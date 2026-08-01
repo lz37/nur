@@ -71,6 +71,7 @@ in
   context-mode = pkgs.callPackage ./pkgs/context-mode.nix { };
   codegraph = pkgs.callPackage ./pkgs/codegraph.nix { };
   spec-kit = pkgs.callPackage ./pkgs/spec-kit.nix { };
+  truenas-mcp = pkgs.callPackage ./pkgs/truenas-mcp.nix { };
   banguminet = pkgs.callPackage ./pkgs/banguminet { };
   pctx = pkgs.callPackage ./pkgs/pctx { };
 }
