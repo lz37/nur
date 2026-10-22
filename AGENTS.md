@@ -112,7 +112,7 @@ bumped `flake.lock` only after the build against it succeeds.
 - `legacyPackages.<system>` imports `default.nix`
 - `packages.<system>` filters derivations by platform compatibility
 - `ciPackages.<system>` is the flattened list of buildable, cacheable exports; `ciJobs.<system>` is the same set keyed by derivation name, and CI enumerates those names as `nix build` installables
-- `nixpkgs` is pinned to `master` (the `nixpkgs-unstable` channel lags behind staging merges)
+- `nixpkgs` tracks the `nixpkgs-unstable` channel; master pins are avoided because heavy runtime deps (chromium, flutter, calibre) are only Hydra-built for channel commits, so CI would compile them from source
 - the flake config also publishes Cachix substituters and trusted keys
 
 ### Current implementation quirks worth remembering

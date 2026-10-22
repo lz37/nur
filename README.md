@@ -97,7 +97,7 @@ This repository currently exports **27 packages**, **1 library helper**, and pla
 ```nix
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/master";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     zerozawa-nur.url = "github:lz37/nur";
   };
 
