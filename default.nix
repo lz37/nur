@@ -69,7 +69,7 @@ in
   mcp-cli = pkgs.callPackage ./pkgs/mcp-cli.nix { };
   agentic-contract = pkgs.callPackage ./pkgs/agentic-contract.nix { };
   lightnovel-crawler = pkgs.callPackage ./pkgs/lightnovel-crawler.nix { };
-  context-mode = pkgs.callPackage ./pkgs/context-mode.nix { };
+  context-mode = pkgs.callPackage ./pkgs/context-mode { };
   truenas-mcp = pkgs.callPackage ./pkgs/truenas-mcp.nix { };
   banguminet = pkgs.callPackage ./pkgs/banguminet { };
   pctx = pkgs.callPackage ./pkgs/pctx { };

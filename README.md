@@ -30,9 +30,9 @@ This repository currently exports **27 packages**, **1 library helper**, and pla
 | `wechat-web-devtools-linux` | Linux build of the WeChat Mini Program DevTools |
 | `agentic-contract` | Policy engine CLI for AI agents |
 | `mcp-cli` | Lightweight CLI for interacting with MCP servers |
-| `context-mode` | MCP server for context window optimization — sandboxed code execution, FTS5 knowledge base |
+| `context-mode` | Free, local plugin that keeps tool output out of your coding agent's context window |
 | `pctx` | Source-built Code Mode execution CLI; its Python SDK is available as `pctx.passthru.py` |
-| `truenas-mcp` | An MCP server for TrueNAS that enables AI models to interact with the TrueNAS API using natural language queries |
+| `truenas-mcp` | Monitor and Manage your TrueNAS via LLM using an MCP plugin |
 | `jadx-headless-mcp` | Headless MCP server for Android APK static analysis, built directly on jadx-core; its fat jar is available as `jadx-headless-mcp.passthru.jar` |
 | `wakaru` | JavaScript decompiler that unpacks bundles and restores readable syntax |
 | `rea-agents` | One MCP for reverse engineering across binaries, applications, and runtime behavior, with pinned tool env (`wakaru`, `jadx-headless-mcp`, `sigrok-cli` 0.7.2, exact pwntools/pyelftools Python with `unicorn` following the packaged version, frida N-API binding) |
