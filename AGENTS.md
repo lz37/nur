@@ -24,7 +24,7 @@ nur/
 ├── default.nix              # main export surface
 ├── flake.nix                # flake outputs and cache config
 ├── ci.nix                   # CI selection rules imported by flake.nix
-├── pkgs/                    # 28 exported package definitions
+├── pkgs/                    # 29 exported package definitions
 ├── lib/                     # library helpers (currently fetchPixiv)
 ├── modules/                 # placeholder NixOS modules namespace
 ├── overlays/                # placeholder overlays namespace
@@ -57,7 +57,7 @@ The repo currently exports 28 packages from `default.nix`, grouped roughly as:
 - SR Vulkan ecosystem: `sr-vulkan` and four model packages
 - Desktop readers and clients: `JMComic-qt`, `picacg-qt`, `LoveIwara`
 - Media and streaming tools: `StartLive`, `bilibili_live_tui`, `lightnovel-crawler`, `mihomo-smart`
-- MCP and developer tools: `agentic-contract`, `context-mode`, `jadx-headless-mcp`, `mcp-cli`, `pctx`, `rea-agents`, `truenas-mcp`, `wakaru`, `wechat-web-devtools-linux`
+- MCP and developer tools: `agentic-contract`, `context-mode`, `jadx-headless-mcp`, `mcp-cli`, `pctx`, `pkl-vscode`, `rea-agents`, `truenas-mcp`, `wakaru`, `wechat-web-devtools-linux`
 - Themes and utilities: `grub-theme-yorha`, `sddm-eucalyptus-drop`, `waybar-vd`, `zsh-url-highlighter`, `mikusays`, `fortune-mod-*`
 
 Always derive exact package names from `default.nix`, not from README snippets or memory files.
@@ -127,6 +127,7 @@ bumped `flake.lock` only after the build against it succeeds.
 - `picacg-qt` 1.5.5.1 no longer commits `src/images_rc.py`; generate it from `res/images.qrc` with Qt's `rcc -g python` before installation. Its runtime now requires `curl-cffi` and `smbprotocol` instead of `httpx`, and the launcher uses `Setting.GetDBPath()` to seed the database in the application's XDG state directory (`$XDG_STATE_HOME/picacg-qt`, falling back to `~/.local/state`). Keep the installed-resource image check enabled via `doCheck` (the Python builder derives `doInstallCheck` from it). Since 1.5.7 it additionally imports `cachetools` unconditionally (`src/task/task_cache.py`) and `pillow_jxl`/`pillow_avif` inside `try/except` for JXL/AVIF decoding: ship `pillow-jxl-plugin`, but do not look for `pillow-avif-plugin` in nixpkgs (removed there because `pillow` >= 11.3 has native AVIF support), and keep the imports optional as upstream has them
 - `LoveIwara` source-builds with `flutter347` (0.6.1 requires Flutter >= 3.47 per its pubspec SDK pin, and its `pubspec.yaml` now declares `0.6.1+1`, which the `postPatch` version rewrite must match — upstream left it at `0.5.0+3` in the 0.5.1 tag); its derivation patches the sqlite3 hook (`lib/src/hook/compile/description.dart`) to use system SQLite instead of the sandboxed native-asset download and treats `sqlite3_flutter_libs 0.6.0+eol` as an empty compatibility package. The Dio `transformTimeout` enum workaround was dropped when the lock moved to Dio 5.11.0, which provides it. The vendored `pubspec.lock.json` is regenerated from upstream's lock with mirror URLs rewritten to `pub.dev` (`yaml.safe_load` → `json.dumps(indent=2, sort_keys=True)`), which reproduces the committed file byte-for-byte
 - `context-mode` source-builds tag `v2.x` with `buildNpmPackage`, mirroring upstream's release CI: `npm ci` installs the devDependency tree (esbuild bundles every `src/` import, so the whole tree is needed), then `node build/build.mjs --out release-out` writes the self-contained bundles that are installed under `lib/node_modules/context-mode` and wrapped with `makeBinaryWrapper`. Upstream commits no lockfile, so `package-lock.json` is generated once per bump with `npm install --package-lock-only` inside the tag tree and `npmDepsHash` recomputed from it; forgetting that step fails the fixed-output `npm ci` with a hash mismatch. Nothing is loaded from `node_modules` at runtime (no `better-sqlite3`; the bundles use the built-in `node:sqlite`), so Node.js >= 24.15 is required
+- `pkl-vscode` cannot use `buildVscodeMarketplaceExtension`: Apple ships the extension only as a GitHub release VSIX and publishes it to neither the marketplace nor open-vsx, so the artifact is pinned by `fetchurl` hash. The VSIX bundles `out/pkl-lsp.jar` (~38 MB) and the extension starts it with Java >= 22 located through `$JAVA_HOME` or `$PATH`; nothing in the derivation can supply that, so users need `jdk22` (or newer) in their profile
 - `truenas-mcp` stays on 0.0.8 because upstream 1.0.0 raises `go.mod`'s `go` directive to 1.27.4 and its `cmd/truenas-mcp` tests assert that toolchain (`TestGoToolchainAtLeast1274`), while nixpkgs `go_1_27` is 1.27.3 and `buildGoModule` forces `GOTOOLCHAIN=local`; 0.0.8 needs only 1.27.3, which is why the derivation overrides the default `go` (1.26.10). Move to 1.0.0 once nixpkgs ships Go >= 1.27.4
 - `fetchPixiv` intentionally uses `fetchurl` with ordered `urls` fallback rather than a single URL
 - `banguminet` uses `buildDotnetModule` with a hand-generated `deps.json`; read `pkgs/banguminet/AGENTS.md` before updating

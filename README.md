@@ -30,6 +30,7 @@ This repository currently exports **27 packages**, **1 library helper**, and pla
 | `wechat-web-devtools-linux` | Linux build of the WeChat Mini Program DevTools |
 | `agentic-contract` | Policy engine CLI for AI agents |
 | `mcp-cli` | Lightweight CLI for interacting with MCP servers |
+| `pkl-vscode` | Pkl language support for Visual Studio Code |
 | `context-mode` | Free, local plugin that keeps tool output out of your coding agent's context window |
 | `pctx` | Source-built Code Mode execution CLI; its Python SDK is available as `pctx.passthru.py` |
 | `truenas-mcp` | Monitor and Manage your TrueNAS via LLM using an MCP plugin |
@@ -130,6 +131,22 @@ repo.lib.fetchPixiv {
   # Optional overrides
   mirrors = [ "pixiv.re" "pixiv.cat" "pixiv.nl" ];
 }
+```
+
+### Using the VS Code extension
+
+`pkl-vscode` is a `vscode-utils.buildVscodeExtension` output, so it plugs into the usual consumers. Its bundled language server needs Java 22 or newer on `PATH` (or `JAVA_HOME`).
+
+```nix
+# Home Manager
+programs.vscode.extensions = [ pkgs.nur.repos.zerozawa.pkl-vscode ];
+
+# or a composed editor
+environment.systemPackages = [
+  (pkgs.vscode-with-extensions.override {
+    vscodeExtensions = [ pkgs.nur.repos.zerozawa.pkl-vscode ];
+  })
+];
 ```
 
 ## Build and Check Commands
