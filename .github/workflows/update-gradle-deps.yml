@@ -54,7 +54,11 @@ jobs:
           echo "Running $path"
       # The script starts a recording MITM proxy, runs the package's Gradle
       # update task through it, and rewrites ${{ inputs.deps_path }} in place.
+      # bwrap is only there to keep the build script from touching $HOME, and
+      # GitHub's runner user cannot create user namespaces, so skip it.
       - name: Record the dependency lock
+        env:
+          USE_BWRAP: "0"
         run: bash "${{ steps.script.outputs.path }}"
       - name: Show the diff
         run: git --no-pager diff --stat
