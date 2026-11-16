@@ -19,9 +19,19 @@
     let
       inherit (nixpkgs) lib;
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
-      # Consumers use these outputs directly (legacyPackages); context-mode is unfree,
-      # so the evaluation itself has to permit it.
-      pkgsFor = system: import nixpkgs { inherit system; config.allowUnfree = true; };
+      # Consumers use these outputs directly (legacyPackages); context-mode is unfree
+      # and lightnovel-crawler carries its own knownVulnerabilities marker, so the
+      # evaluation itself has to permit both. Consumer-side nixpkgs.config cannot
+      # reach this instance: its config is fixed here.
+      pkgsFor =
+        system:
+        import nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true;
+            permittedInsecurePackages = [ "lightnovel-crawler-4.14.0" ];
+          };
+        };
       legacyFor =
         system:
         import ./default.nix {
